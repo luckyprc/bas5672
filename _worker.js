@@ -36,10 +36,20 @@ export default {
       return handleWS(request, cfg);
     }
 
-    // 订阅路由
-    if (path === `/${cfg.subToken.toLowerCase()}`)         return handleSub(request, cfg, 'base64');
-    if (path === `/${cfg.subToken.toLowerCase()}/clash`)   return handleSub(request, cfg, 'clash');
-    if (path === `/${cfg.subToken.toLowerCase()}/singbox`) return handleSub(request, cfg, 'singbox');
+    // 订阅路由：支持路径 /sub 和查询参数 ?token=sub 两种方式（大小写均可）
+    const tok     = cfg.subToken.toLowerCase();
+    const qToken  = (url.searchParams.get('token') || '').toLowerCase();
+    const qFmt    = (url.searchParams.get('fmt')   || '').toLowerCase();
+
+    const isSubPath  = path === `/${tok}` || path === `/${tok}/clash` || path === `/${tok}/singbox`;
+    const isSubQuery = qToken === tok;
+
+    if (isSubPath || isSubQuery) {
+      let fmt = 'base64';
+      if (path.endsWith('/clash')   || qFmt === 'clash')   fmt = 'clash';
+      if (path.endsWith('/singbox') || qFmt === 'singbox') fmt = 'singbox';
+      return handleSub(request, cfg, fmt);
+    }
 
     // 伪装首页 / 反向代理
     if (cfg.fakeWeb) {

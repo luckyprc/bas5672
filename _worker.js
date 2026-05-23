@@ -29,7 +29,7 @@ export default {
   async fetch(request, env) {
     const cfg  = buildConfig(env);
     const url  = new URL(request.url);
-    const path = url.pathname;
+    const path = url.pathname.toLowerCase();
 
     // WebSocket → 代理核心
     if (request.headers.get('Upgrade') === 'websocket') {
@@ -37,9 +37,9 @@ export default {
     }
 
     // 订阅路由
-    if (path === `/${cfg.subToken}`)         return handleSub(request, cfg, 'base64');
-    if (path === `/${cfg.subToken}/clash`)   return handleSub(request, cfg, 'clash');
-    if (path === `/${cfg.subToken}/singbox`) return handleSub(request, cfg, 'singbox');
+    if (path === `/${cfg.subToken.toLowerCase()}`)         return handleSub(request, cfg, 'base64');
+    if (path === `/${cfg.subToken.toLowerCase()}/clash`)   return handleSub(request, cfg, 'clash');
+    if (path === `/${cfg.subToken.toLowerCase()}/singbox`) return handleSub(request, cfg, 'singbox');
 
     // 伪装首页 / 反向代理
     if (cfg.fakeWeb) {

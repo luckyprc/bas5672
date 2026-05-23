@@ -1,3 +1,5 @@
+import { connect } from 'cloudflare:sockets';
+
 /**
  * Optimized Cloudflare Worker
  * 整合 cmliussss/edgetunnel + yonggekkk 优选IP订阅混淆方案
